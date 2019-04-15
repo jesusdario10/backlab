@@ -161,11 +161,6 @@ function updateTag(req, res){
     }
 };
 
-
-
-
-
-
 module.exports = {
     saveEquipo,
     listarEquipostodos,

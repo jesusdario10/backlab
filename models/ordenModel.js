@@ -4,11 +4,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var OrdenSchema = new Schema({
-    oti:{type:number, required},
+    oti:{type:Number, required:true},
     fecha_solicitud:{type:Date},
     fecha_requerida:{type:Date},
-    oti_cliente :{type:string},
-    cliente:                    {type: Schema.ObjectId, ref:'Orden'},
+    fecha_ejecucion:{type:Date},
+    oti_cliente :{type:String},
     centro_costo:               {type:String},
     ubicacion:                  {type:Schema.ObjectId, ref:'Ubicacion'},
     solicitante:                {type:String},
@@ -34,3 +34,5 @@ var OrdenSchema = new Schema({
 
 
 })
+
+module.exports = mongoose.model('Order', OrdenSchema);

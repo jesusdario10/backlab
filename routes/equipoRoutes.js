@@ -1,6 +1,6 @@
 'use strict';
 
-var equipoController = require('../controllers/EquiposController');
+var equipoController = require('../controllers/equiposController');
 
 var md_auth = require('../middlewares/autenticated');
 

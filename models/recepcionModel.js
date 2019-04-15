@@ -9,7 +9,6 @@ var RecepcionShema = Schema({
     no_recepcion : {type:Number},
     solicitante : {type:String},
     tercero:      {type:Schema.ObjectId, ref:'Tercero', required:[true, 'requiere un tercero']},
-    solicitante : {type:String},
     tag : {type:String},
     serial : {type:String},
     intervalo_medicion : {type:String},
@@ -20,3 +19,5 @@ var RecepcionShema = Schema({
     apto: {type:String},
     archivo : {type:String}
 })
+
+module.exports = mongoose.model('Reception', RecepcionShema);
