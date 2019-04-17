@@ -2,6 +2,8 @@
 
 var equipoModel = require('../models/equipoModel');
 var mongossePaginate = require('mongoose-pagination');
+var fs = require('fs');
+var path = require('path');
 
 
 function saveEquipo(req, res){
@@ -159,7 +161,72 @@ function updateTag(req, res){
     }else{
         res.status(404).send({message:'no ingreso ningun tag'});
     }
-};
+}
+
+//subir imagen de equipo para hoja de vida
+function uploadImage(req, res){
+    var equipoId = req.params.id;
+    if(req.files.image != undefined){
+        var file_path = req.files.image.path;
+        var file_split = file_path.split('\\');
+        var file_name = file_split[2];
+
+        var ext_split = file_name.split('\.');
+        console.log(ext_split);
+        var file_ext = ext_split[1];
+
+        if(file_ext == 'png' || file_ext == "jpg" || file_ext == "jpeg" || file_ext == "gif"){
+            equipoModel.findById(equipoId, (err, equipoImage)=>{
+                if(err) return res.status(500).json({message:"error en la peticion."});
+                if(!equipoImage) return res.status(404).json({message:"eno se encontro el equipo"});
+                if(equipoImage){
+                    var pathViejo = "./uploads/equipos/"+equipoImage.image;
+                    // ====en caso de que ya exista una imagen la borramos ===== //
+                    if(fs.existsSync(pathViejo)){
+                        fs.unlink(pathViejo, (err)=>{
+                            console.log("imagen antigua borrada");
+                        })
+                    }
+                    //guardamos
+                    equipoImage.image = file_name;
+                    equipoImage.save((err, equipo)=>{
+                        if(err) return res.status(500).send({message:"Error en la peticion"});
+                        if(!equipo) return res.status(404).send({message:"error imagen no guardada"});
+                        return res.status(200).json({equipo});
+                    });
+                }     
+            });
+        }else{
+                removeFileUploads(res, file_path, "Tipo de archivo no valido");
+            }
+        }
+}
+//Eliminar imagen de equipo
+function removeFileUploads(res, file_path, message){
+    fs.unlink(file_path, (err)=>{//elimina el archivo subido de la ruta
+        return res.status(200).json({message:message});
+    });
+}
+
+//Devolver Imagen del equipo
+function getImageFile(req, res){
+    var equipoId = req.params.id;
+
+    equipoModel.findById(equipoId, (err, equipo)=>{
+        if(err) return res.status(500).send({message:"Error en la peticion"});
+        if(!equipo) return res.status(404).send({message:"Error usuario no existe"});
+        if(equipo){
+            var path_file = './uploads/equipos/'+equipo.image;
+            fs.exists(path_file, (exists)=>{
+                if(exists){
+                    return res.sendFile(path.resolve(path_file))
+                }else{
+                    return res.status(200).json({message:"No existe la imagen"});
+                }
+            });
+        }
+    });
+}
 
 module.exports = {
     saveEquipo,
@@ -167,5 +234,7 @@ module.exports = {
     listarUnEquipo,
     updateEquipo,
     updateSerial,
-    updateTag
+    updateTag,
+    uploadImage,
+    getImageFile
 }

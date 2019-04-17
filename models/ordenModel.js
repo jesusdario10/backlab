@@ -15,6 +15,7 @@ var OrdenSchema = new Schema({
     tercero:                    {type:Schema.ObjectId, ref:'Tercero', required:[true, 'requiere un tercero']},
     usuario_creador:            {type:Schema.ObjectId, ref:'User', required:[true, 'requiere un usuario creador']},
     usuario_modificador:        {type:Schema.ObjectId, ref:'User'},
+    estado :                    {type:String},
     items:[{
         tag:                    {type:String},
         nombre:                 {type:String},
